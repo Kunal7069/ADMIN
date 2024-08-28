@@ -1,0 +1,364 @@
+import { useState, useEffect } from "react";
+import Header from "./Header";
+import Select from "react-select";
+
+export default function Add_Bus() {
+  const [isPopupVisible, setPopupVisible] = useState(false);
+  const [isOverlayVisible, setOverlayVisible] = useState(false);
+  const [busno, setBusno] = useState("");
+  const [startpoint, setStartpoint] = useState("");
+  const [endpoint, setEndpoint] = useState("");
+  const [options, setOptions] = useState([]);
+  const [options_3, setOptions_3] = useState([]);
+  const [selectedOptions, setSelectedOptions] = useState([]);
+  const [rows, setRows] = useState([{ station: "", arrival_time: "", departure_time: "" }]);
+  const [bustype, setBustype] = useState("");
+  const [totalseats, setTotalseats] = useState(0);
+  const [priceperstop, setPriceperstop] = useState(0);
+  const bus_type = ["A/C", "NON A/C"];
+
+  useEffect(() => {
+    const fetchBusStations = async () => {
+      try {
+        const response = await fetch("http://localhost:5000/get_routes");
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        const data = await response.json();
+        setOptions(data);
+        const formattedOptions = data.map((station) => ({
+          value: station,
+          label: station,
+        }));
+        setOptions_3(formattedOptions);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchBusStations();
+  }, []);
+
+  const handleInitialSubmit = (e) => {
+    e.preventDefault();
+    setPopupVisible(true);
+  };
+
+  const handlePopupSubmit = (e) => {
+    e.preventDefault();
+    setPopupVisible(false);
+    setOverlayVisible(true);
+  };
+
+  const handleOverlayClick = () => {
+    setOverlayVisible(false);
+  };
+
+  const handleChange_3 = (selectedOptions) => {
+    setSelectedOptions(selectedOptions || []);
+  };
+
+  const addRow = () => {
+    setRows([...rows, { station: "", arrival_time: "", departure_time: "" }]);
+  };
+
+  const handleInputChange = (index, event) => {
+    const { name, value } = event.target;
+    const updatedRows = rows.map((row, i) =>
+      i === index ? { ...row, [name]: value } : row
+    );
+    setRows(updatedRows);
+  };
+
+  const getData = async (e) => {
+    e.preventDefault();
+    const route = selectedOptions.map(option => option.value);
+
+    try {
+      const response = await fetch("http://localhost:5000/save_bus", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          busno,
+          startpoint,
+          endpoint,
+          bustype,
+          totalseats,
+          priceperstop,
+          route,
+          rows,
+        }),
+      });
+
+      if (response.ok) {
+        console.log("Bus saved successfully");
+      } else {
+        console.error("Failed to save bus stop");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+    setBusno("");
+    setStartpoint("");
+    setEndpoint("");
+    setBustype("");
+    setTotalseats(0);
+    setPriceperstop(0);
+    setSelectedOptions([]);
+    setRows([{ station: "", arrival_time: "", departure_time: "" }]);
+    handleOverlayClick();
+  };
+
+  return (
+    <>
+      <Header />
+      <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-2 lg:px-8">
+        <div className="sm:mx-auto sm:w-full sm:max-w-sm">
+          <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
+            ADD BUS
+          </h2>
+        </div>
+
+        <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+          <form onSubmit={handleInitialSubmit} className="space-y-6">
+            <div>
+              <label htmlFor="bus_no" className="block text-sm font-medium leading-6 text-gray-900">
+                BUS NO
+              </label>
+              <div className="mt-2">
+                <input
+                  id="bus_no"
+                  name="bus_no"
+                  type="text"
+                  required
+                  value={busno}
+                  onChange={(e) => setBusno(e.target.value)}
+                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label htmlFor="startpoint" className="block text-sm font-medium leading-6 text-gray-900">
+                START POINT
+              </label>
+              <div className="mt-2">
+                <select
+                  name="startpoint"
+                  value={startpoint}
+                  required
+                  onChange={(e) => setStartpoint(e.target.value)}
+                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                >
+                  <option value="">Select an option</option>
+                  {options.map((option, i) => (
+                    <option key={i} value={option}>
+                      {option}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label htmlFor="endpoint" className="block text-sm font-medium leading-6 text-gray-900">
+                END POINT
+              </label>
+              <div className="mt-2">
+                <select
+                  name="endpoint"
+                  value={endpoint}
+                  required
+                  onChange={(e) => setEndpoint(e.target.value)}
+                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                >
+                  <option value="">Select an option</option>
+                  {options.map((option, i) => (
+                    <option key={i} value={option}>
+                      {option}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <button
+                type="submit"
+                className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              >
+                Next
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      {isPopupVisible && (
+        <div className="fixed inset-0 flex items-center justify-center bg-gray-700 bg-opacity-50 z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
+            <h3 className="text-lg font-medium leading-6 text-gray-900 mb-4">
+              Enter Additional Bus Details
+            </h3>
+            <form onSubmit={handlePopupSubmit} className="space-y-4">
+              <div>
+                <label htmlFor="bustype" className="block text-sm font-medium leading-6 text-gray-900">
+                  BUS TYPE
+                </label>
+                <select
+                  name="bustype"
+                  value={bustype}
+                  required
+                  onChange={(e) => setBustype(e.target.value)}
+                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                >
+                  <option value="">Select an option</option>
+                  {bus_type.map((option, i) => (
+                    <option key={i} value={option}>
+                      {option}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label htmlFor="totalseats" className="block text-sm font-medium leading-6 text-gray-900">
+                  TOTAL SEATS
+                </label>
+                <input
+                  id="totalseats"
+                  name="totalseats"
+                  type="number"
+                  required
+                  value={totalseats}
+                  onChange={(e) => setTotalseats(parseInt(e.target.value))}
+                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="priceperstop" className="block text-sm font-medium leading-6 text-gray-900">
+                  PRICE PER STOP
+                </label>
+                <input
+                  id="priceperstop"
+                  name="priceperstop"
+                  type="number"
+                  required
+                  value={priceperstop}
+                  onChange={(e) => setPriceperstop(parseFloat(e.target.value))}
+                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="route" className="block text-sm font-medium leading-6 text-gray-900">
+                  ROUTE
+                </label>
+                <Select
+                  isMulti
+                  name="route"
+                  options={options_3}
+                  value={selectedOptions}
+                  onChange={handleChange_3}
+                  className="basic-multi-select"
+                  classNamePrefix="select"
+                  placeholder="Select Route"
+                />
+              </div>
+
+              <div className="flex justify-end">
+                <button
+                  type="submit"
+                  className="rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                >
+                  Next
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {isOverlayVisible && (
+        <div className="fixed inset-0 flex items-center justify-center bg-gray-700 bg-opacity-50 z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg max-w-3xl w-full">
+            <h3 className="text-lg font-medium leading-6 text-gray-900 mb-4">
+              Enter The Time Table
+            </h3>
+            <form onSubmit={getData}>
+              <table className="min-w-full border-collapse">
+                <thead>
+                  <tr>
+                    <th className="border px-4 py-2">Station</th>
+                    <th className="border px-4 py-2">Arrival Time</th>
+                    <th className="border px-4 py-2">Departure Time</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {rows.map((row, index) => (
+                    <tr key={index}>
+                      <td className="border px-4 py-2">
+                        <select
+                          name="station"
+                          value={row.station}
+                          onChange={(e) => handleInputChange(index, e)}
+                          className="w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                        >
+                          <option value="">Select a station</option>
+                          {options.map((station, i) => (
+                            <option key={i} value={station}>
+                              {station}
+                            </option>
+                          ))}
+                        </select>
+                      </td>
+                      <td className="border px-4 py-2">
+                        <input
+                          type="time"
+                          name="arrival_time"
+                          value={row.arrival_time}
+                          onChange={(e) => handleInputChange(index, e)}
+                          className="w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                        />
+                      </td>
+                      <td className="border px-4 py-2">
+                        <input
+                          type="time"
+                          name="departure_time"
+                          value={row.departure_time}
+                          onChange={(e) => handleInputChange(index, e)}
+                          className="w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                        />
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              <div className="mt-4">
+                <button
+                  type="button"
+                  onClick={addRow}
+                  className="rounded-md bg-gray-200 px-3 py-1.5 text-sm font-semibold leading-6 text-gray-700 shadow-sm hover:bg-gray-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                >
+                  Add Row
+                </button>
+              </div>
+
+              <div className="mt-6 flex justify-end">
+                <button
+                  type="submit"
+                  className="rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                >
+                  Submit
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
