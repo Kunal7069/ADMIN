@@ -42,7 +42,7 @@ export default function Header() {
             <div className="flex h-16 items-center justify-between">
               <div className="flex items-center">
                 <div className="flex-shrink-0">
-                  <a href="/dashboard">
+                  <a href="/">
                   <img
                     alt="Your Company"
                     src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"
