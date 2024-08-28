@@ -49,5 +49,8 @@
   "devDependencies": {
     "tailwindcss": "^3.4.10",
     "react-select": "^5.8.0"
+  },
+  "engines": {
+    "node": "16.x"
   }
 }
