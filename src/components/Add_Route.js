@@ -16,7 +16,7 @@ export default function Add_Route() {
   useEffect(() => {
     const fetchBusStations = async () => {
       try {
-        const response = await fetch("https://admin-server-al2u.onrender.com/get_bus_stations");
+        const response = await fetch("https://admin-server-1-htqk.onrender.com/get_bus_stations");
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }
@@ -53,7 +53,7 @@ export default function Add_Route() {
     console.log('Selected Options:', route);
     // Handle form submission logic here
     try {
-              const response = await fetch("https://admin-server-al2u.onrender.com/save_route", {
+              const response = await fetch("https://admin-server-1-htqk.onrender.com/save_route", {
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json",
