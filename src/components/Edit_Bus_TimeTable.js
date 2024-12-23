@@ -21,7 +21,7 @@ export default function Edit_Bus_TimeTable() {
 
     try {
       const response = await fetch(
-        "https://admin-server-al2u.onrender.com/update_bus_timetable",
+        "https://admin-server-1-htqk.onrender.com/update_bus_timetable",
         {
           method: "POST",
           headers: {
@@ -48,7 +48,7 @@ export default function Edit_Bus_TimeTable() {
     e.preventDefault();
     console.log(busno);
     try {
-      const response = await fetch("https://admin-server-al2u.onrender.com/get_bus_timetable", {
+      const response = await fetch("https://admin-server-1-htqk.onrender.com/get_bus_timetable", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
