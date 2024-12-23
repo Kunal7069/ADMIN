@@ -19,7 +19,7 @@ export default function Add_Bus_Station() {
     e.preventDefault();
 
     try {
-      const response = await fetch("https://admin-server-al2u.onrender.com/save_bus_stop", {
+      const response = await fetch("https://admin-server-1-htqk.onrender.com/save_bus_stop", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
