@@ -176,7 +176,7 @@ export default function Add_Bus() {
     console.log("FINAL", route);
 
     try {
-      const response = await fetch("https://admin-server-al2u.onrender.com/save_bus", {
+      const response = await fetch("https://admin-server-1-htqk.onrender.com/save_bus", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -204,7 +204,7 @@ export default function Add_Bus() {
   const fetchRouteDetails = async (routeno) => {
     try {
       const response = await fetch(
-        "https://admin-server-al2u.onrender.com/get_route_via_routeno",
+        "https://admin-server-1-htqk.onrender.com/get_route_via_routeno",
         {
           method: "POST",
           headers: {
@@ -234,7 +234,7 @@ export default function Add_Bus() {
     console.log(`Running days for route ${currentRoute}:`, selectedDays);
     
     try {
-      const response = await fetch("https://admin-server-al2u.onrender.com/check_time_table", {
+      const response = await fetch("https://admin-server-1-htqk.onrender.com/check_time_table", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -249,7 +249,7 @@ export default function Add_Bus() {
       const data = await response.json();
       if (data.length === 0) {
         try {
-          const response = await fetch("https://admin-server-al2u.onrender.com/save_bus_route", {
+          const response = await fetch("https://admin-server-1-htqk.onrender.com/save_bus_route", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -276,7 +276,7 @@ export default function Add_Bus() {
         console.log("THERE ARE CONFLICTS",data);
         setConflictingData(data);
         try {
-          const response = await fetch("https://admin-server-al2u.onrender.com/delete_bus_data", {
+          const response = await fetch("https://admin-server-1-htqk.onrender.com/delete_bus_data", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
