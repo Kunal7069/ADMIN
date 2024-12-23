@@ -12,7 +12,7 @@ function Bus_Info() {
   useEffect(() => {
     const fetchBuses = async () => {
       try {
-        const response = await fetch('https://admin-server-al2u.onrender.com/get_buses');
+        const response = await fetch('https://admin-server-1-htqk.onrender.com/get_buses');
         if (response.ok) {
           const data = await response.json();
           console.log("BUSES",data)
@@ -45,7 +45,7 @@ function Bus_Info() {
   const handleClick = async (busNo) => {
     try {
       console.log("BUS NO 2",busNo)
-      const response = await fetch("https://admin-server-al2u.onrender.com/get_bus_details", {
+      const response = await fetch("https://admin-server-1-htqk.onrender.com/get_bus_details", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
