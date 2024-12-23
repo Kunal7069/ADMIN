@@ -10,7 +10,7 @@ function Route_Info() {
 
   useEffect(() => {
     setIsLoading(true);
-    fetch('https://admin-server-al2u.onrender.com/get_routes')
+    fetch('https://admin-server-1-htqk.onrender.com/get_routes')
       .then(response => {
         if (!response.ok) {
           throw new Error('Network response was not ok');
