@@ -36,7 +36,7 @@ export default function Add_Bus_Route_Timetable() {
   useEffect(() => {
     const fetchBuses = async () => {
       try {
-        const response = await fetch("https://admin-server-al2u.onrender.com/get_buses"); // Replace with your bus API endpoint
+        const response = await fetch("https://admin-server-1-htqk.onrender.com/get_buses"); // Replace with your bus API endpoint
         const data = await response.json();
         setBuses(data);
       } catch (error) {
@@ -46,7 +46,7 @@ export default function Add_Bus_Route_Timetable() {
 
     const fetchRoutes = async () => {
       try {
-        const response = await fetch("https://admin-server-al2u.onrender.com/get_route_numbers"); // Replace with your route API endpoint
+        const response = await fetch("https://admin-server-1-htqk.onrender.com/get_route_numbers"); // Replace with your route API endpoint
         const data = await response.json();
         setRoutes(data);
       } catch (error) {
@@ -55,7 +55,7 @@ export default function Add_Bus_Route_Timetable() {
     };
     const fetchBusStations = async () => {
       try {
-        const response = await fetch("https://admin-server-al2u.onrender.com/get_bus_stations");
+        const response = await fetch("https://admin-server-1-htqk.onrender.com/get_bus_stations");
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }
@@ -98,7 +98,7 @@ export default function Add_Bus_Route_Timetable() {
 
     try {
       const response = await fetch(
-        "https://admin-server-al2u.onrender.com/check_busno_routeno",
+        "https://admin-server-1-htqk.onrender.com/check_busno_routeno",
         {
           method: "POST",
           headers: {
@@ -116,7 +116,7 @@ export default function Add_Bus_Route_Timetable() {
       if (data.exists) {
         try {
           const response = await fetch(
-            "https://admin-server-al2u.onrender.com/get_route_via_routeno",
+            "https://admin-server-1-htqk.onrender.com/get_route_via_routeno",
             {
               method: "POST",
               headers: {
@@ -138,7 +138,7 @@ export default function Add_Bus_Route_Timetable() {
 
         try {
           const response = await fetch(
-            "https://admin-server-al2u.onrender.com/get_timetable_days",
+            "https://admin-server-1-htqk.onrender.com/get_timetable_days",
             {
               method: "POST",
               headers: {
@@ -201,7 +201,7 @@ export default function Add_Bus_Route_Timetable() {
     e.preventDefault();
 
     try {
-      const response = await fetch("https://admin-server-al2u.onrender.com/check_time_table", {
+      const response = await fetch("https://admin-server-1-htqk.onrender.com/check_time_table", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -218,7 +218,7 @@ export default function Add_Bus_Route_Timetable() {
       if (data.length === 0) {
         try {
           const response = await fetch(
-            "https://admin-server-al2u.onrender.com/update_bus_route",
+            "https://admin-server-1-htqk.onrender.com/update_bus_route",
             {
               method: "POST",
               headers: {
