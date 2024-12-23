@@ -15,7 +15,7 @@ export default function Homepage() {
 
   useEffect(() => {
     // Fetch the data from the API
-    fetch('https://admin-server-al2u.onrender.com/get_bus_analyses')
+    fetch('https://admin-server-1-htqk.onrender.com/get_bus_analyses')
       .then(response => response.json())
       .then(data => {
         setBusCount(data.length);
@@ -24,17 +24,8 @@ export default function Homepage() {
       })
       .catch(error => console.error('Error fetching data:', error));
 
-    // fetch('http://localhost:5000/users')
-    // .then(response => response.json())
-    // .then(data => {
-    //   setUserData(data);
-    //   console.log("LEN",data.length)
-    //   setUserNo(data.length)
-    //   setLoading(false);
-    // })
-    // .catch(error => console.error('Error fetching data:', error));
 
-    fetch('https://admin-server-al2u.onrender.com/get_routes')
+    fetch('https://admin-server-1-htqk.onrender.com/get_routes')
     .then(response => response.json())
     .then(data => {
       setRouteCount(data.length)
