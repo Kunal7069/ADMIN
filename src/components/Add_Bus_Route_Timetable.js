@@ -49,6 +49,7 @@ export default function Add_Bus_Route_Timetable() {
         const response = await fetch("https://admin-server-1-htqk.onrender.com/get_route_numbers"); // Replace with your route API endpoint
         const data = await response.json();
         setRoutes(data);
+        console.log("ROUTES",routes)
       } catch (error) {
         console.error("Error fetching routes:", error);
       }

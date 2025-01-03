@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import Header from "./Header";
 import Select from "react-select";
-
 // Updated Overlay component
 const Overlay = ({ routeNo, routeDetails, onClose, onSaveTimeTable }) => {
   const [timeTable, setTimeTable] = useState([]);
@@ -10,6 +9,7 @@ const Overlay = ({ routeNo, routeDetails, onClose, onSaveTimeTable }) => {
   const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
   useEffect(() => {
+    console.log("routeDetails_TIMETABLE",routeDetails)
     if (routeDetails) {
       setTimeTable(
         routeDetails.map(station => ({
@@ -126,9 +126,164 @@ const Overlay = ({ routeNo, routeDetails, onClose, onSaveTimeTable }) => {
   );
 };
 
+// const TimetableOverlay = ({ currentRouteDetails,busno_2,routeno_2, onClose }) => {
+//   const [routeDetails, setRouteDetails] = useState([]);
+//   const [busno, setBusno] = useState("");
+//   const [routeno, setRouteno] = useState("");
+  
+//   useEffect(() => {
+//     console.log("currentRouteDetails_TIMETABLE",currentRouteDetails,busno_2,routeno_2)
+//     if (currentRouteDetails) {
+//       setRouteDetails(currentRouteDetails);
+//       setBusno(busno_2);
+//       setRouteno(routeno_2)
+//       console.log("currentRouteDetails_TIMETABLE",currentRouteDetails)
+//     }
+//   }, [currentRouteDetails]);
+  
+//   return (
+//     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center overflow-auto">
+//       <div className="bg-white p-6 rounded-lg max-w-6xl w-full m-4">
+//         <h2 className="text-xl mb-4">COST </h2>
+//         <ul className="list-disc pl-5">
+//           {busno} {routeno}
+//           {routeDetails  &&
+//             routeDetails.map((item, index) => (
+//               <li key={index} className="mb-2">
+//                 {item}
+//               </li>
+//             ))
+//           }
+//         </ul>
+//         <div className="mt-4 flex justify-end">
+//           <button
+//             onClick={onClose}
+//             className="bg-blue-500 text-white px-4 py-2 rounded"
+//           >
+//             Close
+//           </button>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
+
+const TimetableOverlay = ({ currentRouteDetails, busno_2, routeno_2, onClose }) => {
+  const [routeDetails, setRouteDetails] = useState([]);
+  const [busno, setBusno] = useState("");
+  const [routeno, setRouteno] = useState("");
+  const [tableData, setTableData] = useState([]);
+
+  useEffect(() => {
+    if (currentRouteDetails) {
+      setRouteDetails(currentRouteDetails);
+      setBusno(busno_2);
+      setRouteno(routeno_2);
+
+      // Generate combinations of "from" and "to" stations
+      const combinations = [];
+      for (let i = 0; i < currentRouteDetails.length; i++) {
+        for (let j = i + 1; j < currentRouteDetails.length; j++) {
+          combinations.push({
+            busno:busno,
+            routeno:routeno,
+            fromstation: currentRouteDetails[i],
+            tostation: currentRouteDetails[j],
+            cost: "",
+          });
+        }
+      }
+      setTableData(combinations);
+    }
+  }, [currentRouteDetails, busno_2, routeno_2]);
+
+  const handleTicketCostChange = (index, value) => {
+    const updatedTableData = [...tableData];
+    updatedTableData[index].cost = value;
+    setTableData(updatedTableData);
+  };
+
+  const handleClose = async () => {
+    const payload = tableData.map((row) => ({
+      busno,
+      routeno,
+      fromstation: row.fromstation,
+      tostation: row.tostation,
+      cost: row.cost,
+    }));
+
+    try {
+      console.log(payload)
+      const response = await fetch("https://admin-server-1-htqk.onrender.com/save_cost", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.message || "Failed to save cost details");
+      }
+
+      console.log("API Response:", result);
+    } catch (error) {
+      console.error("Error saving cost data:", error);
+    }
+
+    onClose();
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center overflow-auto">
+      <div className="bg-white p-6 rounded-lg max-w-6xl w-full m-4">
+        <h2 className="text-xl mb-4">TICKET COST</h2>
+        <p>BUS NO - {busno}  ROUTE NO - {routeno}</p>
+        <table className="table-auto w-full border-collapse border border-gray-300">
+          <thead>
+            <tr>
+              <th className="border border-gray-300 px-4 py-2">From Station</th>
+              <th className="border border-gray-300 px-4 py-2">To Station</th>
+              <th className="border border-gray-300 px-4 py-2">Ticket Cost</th>
+            </tr>
+          </thead>
+          <tbody>
+            {tableData.map((row, index) => (
+              <tr key={index}>
+                <td className="border border-gray-300 px-4 py-2">{row.fromstation}</td>
+                <td className="border border-gray-300 px-4 py-2">{row.tostation}</td>
+                <td className="border border-gray-300 px-4 py-2">
+                  <input
+                    type="text"
+                    value={row.cost}
+                    onChange={(e) => handleTicketCostChange(index, e.target.value)}
+                    className="w-full px-2 py-1 border border-gray-300 rounded"
+                  />
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <div className="mt-4 flex justify-end">
+          <button
+            onClick={handleClose}
+            className="bg-blue-500 text-white px-4 py-2 rounded"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+
 
 export default function Add_Bus() {
   const [busno, setBusno] = useState("");
+  const [routeno, setRouteno] = useState("");
   const [options, setOptions] = useState([]);
   const [options_3, setOptions_3] = useState([]);
   const [selectedOptions, setSelectedOptions] = useState([]);
@@ -138,6 +293,7 @@ export default function Add_Bus() {
   const [showConflictPopup, setShowConflictPopup] = useState(false);
   const [conflictingData, setConflictingData] = useState([]);
   const [currentOverlayIndex, setCurrentOverlayIndex] = useState(-1);
+  const [isTimetableOverlayOpen, setTimetableOverlayOpen] = useState(-1);
   const [currentRouteDetails, setCurrentRouteDetails] = useState(null);
 
   const bus_type = ["A/C", "NON A/C"];
@@ -146,7 +302,7 @@ export default function Add_Bus() {
     const fetchRoutes = async () => {
       try {
         const response = await fetch(
-          "https://admin-server-al2u.onrender.com/get_complete_routes"
+          "https://admin-server-1-htqk.onrender.com/get_complete_routes"
         );
         if (!response.ok) {
           throw new Error("Network response was not ok");
@@ -192,6 +348,7 @@ export default function Add_Bus() {
       if (response.ok) {
         console.log("Bus saved successfully");
         setCurrentOverlayIndex(0);
+        setRouteno(route[0])
         await fetchRouteDetails(route[0]);
       } else {
         console.error("Failed to save bus stop");
@@ -200,7 +357,10 @@ export default function Add_Bus() {
       console.error("Error:", error);
     }
   };
-
+  const handleTimetableOverlayClose = () => {
+   console.log("CLOSED");
+   setTimetableOverlayOpen(-1);
+  };
   const fetchRouteDetails = async (routeno) => {
     try {
       const response = await fetch(
@@ -216,6 +376,7 @@ export default function Add_Bus() {
       if (response.ok) {
         const data = await response.json();
         setCurrentRouteDetails(data);
+        console.log("currentRouteDetails111",data)
       } else {
         console.error("Failed to fetch route details");
         setCurrentRouteDetails(null);
@@ -264,6 +425,8 @@ export default function Add_Bus() {
     
           if (response.ok) {
             console.log("Bus route saved successfully");
+            console.log("currentRouteDetails12345",currentRouteDetails)
+            setTimetableOverlayOpen(0);
           } else {
             console.error("Failed to save bus route");
           }
@@ -317,8 +480,8 @@ export default function Add_Bus() {
       await fetchRouteDetails(route[nextIndex]);
     } else {
       setCurrentOverlayIndex(-1);
-      setCurrentRouteDetails(null);
-      setBusno("");
+      // setCurrentRouteDetails(null);
+      // setBusno("");
       setBustype("");
       setTotalseats(0);
       setSelectedOptions([]);
@@ -453,7 +616,14 @@ export default function Add_Bus() {
           onSaveTimeTable={handleSaveTimeTable}
         />
       )}
-
+      {isTimetableOverlayOpen>=0 && (
+        <TimetableOverlay
+         currentRouteDetails={currentRouteDetails}
+         busno_2={busno}
+         routeno_2={routeno}
+          onClose={handleTimetableOverlayClose}
+        />
+      )}
 {showConflictPopup && (
         <div className="fixed inset-0 flex items-center justify-center bg-gray-700 bg-opacity-50 z-50">
           <div className="bg-white p-6 rounded-lg shadow-lg max-w-3xl w-full max-h-[80vh] flex flex-col">
